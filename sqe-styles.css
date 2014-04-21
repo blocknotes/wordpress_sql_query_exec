@@ -1,0 +1,68 @@
+/**
+ * Plugin Name: SQL Query Exec
+ * Author: Mattia Roccoberton
+ * Author URI: http://blocknot.es
+ * License: GPL3
+ */
+
+.wpdberror {
+	border: 1px solid red;
+	padding: 5px;
+}
+
+#sqe-credits {
+	float: right;
+	font-style: italic;
+}
+
+#sqe-message {
+	border: 1px solid #888;
+	font-weight: bold;
+	padding: 5px;
+	text-align: center;
+}
+
+#sql-prev-query,
+#sqe-query {
+	width: 100%;
+}
+
+#sqe-results-wrapper {
+	border: 1px solid #888;
+	margin-top: 10px;
+	overflow: auto;
+	width: 100%;
+}
+#sqe-results {
+	background: #fff;
+	border-spacing: 1px;
+	color: #000;
+	font-size: 10pt;
+	text-align: left;
+	width: 100%;
+}
+#sqe-results th {
+	background: #888;
+	border-bottom: 1px solid #aaa;
+	color: #fff;
+	padding: 1px 4px;
+}
+#sqe-results .c1 {
+	font-style: italic;
+	font-weight: bold;
+	text-align: center;
+}
+#sqe-results tr.even {
+	background: #ccc;
+}
+#sqe-results tr.odd {
+	background: #ddd;
+}
+
+#sqe-warning {
+	border: 1px solid #FA0;
+	font-style: italic;
+	margin-bottom: 10px;
+	padding: 5px;
+	text-align: center;
+}
