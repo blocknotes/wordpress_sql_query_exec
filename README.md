@@ -19,4 +19,4 @@ The author of this plugin is not responsible for the consequences of use of this
 
 * * *
 
-![Screenshot](http://github.com/blocknotes/wordpress_category_featured_images/raw/master/screenshot.png)
+![Screenshot](http://github.com/blocknotes/wordpress_sql_query_exec/raw/master/screenshot.png)
