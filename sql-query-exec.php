@@ -3,7 +3,7 @@
  * Plugin Name: SQL Query Exec
  * Plugin URI: https://github.com/blocknotes/wordpress_sql_query_exec
  * Description: Execute SQL queries (admin only) - Installed in: Tools \ SQL Query Exec
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: Mattia Roccoberton
  * Author URI: http://blocknot.es
  * License: GPL3
@@ -37,7 +37,7 @@ class sql_query_exec
 		$sqe_cnt = isset( $_POST['sqe_last_cnt'] ) ? ( intval( $_POST['sqe_last_cnt'] ) > 1 ? 1 : 2 ) : 1;
 ?>
 		<div class="wrap">
-			<div id="sqe-credits">by <a href="http://blocknot.es" target="_blank">Mat</a></div>
+			<div id="sqe-credits"><a href="http://www.blocknot.es/home/me/" target="_blank"><img src="http://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate" /></a></div>
 			<h2>SQL Query Exec</h2>
 			<div id="sqe-warning"><b>Warning:</b> manipulating the database can be dangerous, be careful. Do a backup before going on.<br />The author of this plugin is not responsible for the consequences of use of this software, no matter how awful, even if they arise from flaws in it.</div>
 			<form method="post" id="form-sql-query-exec" name="form-sql-query-exec">
