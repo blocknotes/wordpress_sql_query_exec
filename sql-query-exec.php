@@ -3,7 +3,7 @@
  * Plugin Name: SQL Query Exec
  * Plugin URI: https://github.com/blocknotes/wordpress_sql_query_exec
  * Description: Execute SQL queries (admin only) - Installed in: Tools \ SQL Query Exec
- * Version: 1.0.5
+ * Version: 1.1.0
  * Author: Mattia Roccoberton
  * Author URI: http://blocknot.es
  * License: GPL3
@@ -33,8 +33,11 @@ class sql_query_exec
 	{
 		global $wpdb;
 		if( !current_user_can( 'manage_options' ) ) wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
-		$sqe_cut = !isset( $_POST['sqe_query'] ) ? TRUE : !empty( $_POST['sqe_cut'] );
+		$sqe_cut = !isset( $_POST['sqe_cut'] ) ? TRUE : !empty( $_POST['sqe_cut'] );
 		$sqe_cnt = isset( $_POST['sqe_last_cnt'] ) ? ( intval( $_POST['sqe_last_cnt'] ) > 1 ? 1 : 2 ) : 1;
+		$sqe_q  = isset( $_POST['sqe_query'] ) ? $_POST['sqe_query'] : '';
+		$sqe_q1 = isset( $_POST['sqe_last_query1'] ) ? $_POST['sqe_last_query1'] : '';
+		$sqe_q2 = isset( $_POST['sqe_last_query2'] ) ? $_POST['sqe_last_query2'] : '';
 ?>
 		<div class="wrap">
 			<div id="sqe-credits"><a href="http://www.blocknot.es/home/me/" target="_blank"><img src="http://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate" /></a></div>
@@ -43,15 +46,15 @@ class sql_query_exec
 			<form method="post" id="form-sql-query-exec" name="form-sql-query-exec">
 				<input type="hidden" name="sqe_show_tables" id="sqe-show-tables" value="0" />
 				<input type="hidden" name="sqe_last_cnt" value="<?php echo $sqe_cnt; ?>" />
-				<input type="hidden" name="sqe_last_query1" value="<?php echo htmlentities( stripslashes( ( $sqe_cnt == 1 ) ? $_POST['sqe_query'] : $_POST['sqe_last_query1'] ) ); ?>" />
-				<input type="hidden" name="sqe_last_query2" value="<?php echo htmlentities( stripslashes( ( $sqe_cnt == 2 ) ? $_POST['sqe_query'] : $_POST['sqe_last_query2'] ) ); ?>" />
+				<input type="hidden" name="sqe_last_query1" value="<?php echo htmlentities( stripslashes( ( $sqe_cnt == 1 ) ? $sqe_q : $sqe_q1 ) ); ?>" />
+				<input type="hidden" name="sqe_last_query2" value="<?php echo htmlentities( stripslashes( ( $sqe_cnt == 2 ) ? $sqe_q : $sqe_q2 ) ); ?>" />
 				<div>
 					<label for="sqe-query">SQL query (press Enter to execute):</label>
-					<textarea id="sqe-query" name="sqe_query" autofocus="autofocus" cols="80" rows="3" onkeypress="Javascript:if(event.keyCode===13){document.getElementById('form-sql-query-exec').submit();return false;}"><?php echo isset( $_POST['sqe_query'] ) ? stripslashes( $_POST['sqe_query'] ) : ''; ?></textarea>
+					<textarea id="sqe-query" name="sqe_query" autofocus="autofocus" cols="80" rows="3" onkeypress="Javascript:if(event.keyCode===13){document.getElementById('form-sql-query-exec').submit();return false;}"><?php echo stripslashes( $sqe_q ); ?></textarea>
 				</div>
 				<div style="margin-top: 5px">
 					<label for="sqe_prev_query">Previous query:</label>
-					<input type="text" id="sql-prev-query" readonly="readonly" value="<?php echo htmlentities( stripslashes( ( $sqe_cnt == 2 ) ? $_POST['sqe_last_query1'] : $_POST['sqe_last_query2'] ) ); ?>" />
+					<input type="text" id="sql-prev-query" readonly="readonly" value="<?php echo htmlentities( stripslashes( ( $sqe_cnt == 2 ) ? $sqe_q1 : $sqe_q2 ) ); ?>" />
 				</div>
 				<div style="margin-top: 10px">
 					<label class="selectit"><input type="checkbox" id="sqe_cut" name="sqe_cut" <?php echo $sqe_cut ? 'checked="checked"' : ''; ?> />Cut long values (over 40 chars)</label> &nbsp; 
@@ -67,6 +70,7 @@ class sql_query_exec
 			if( $result !== FALSE )
 			{
 				echo "<hr />\n";
+				$cnt = 0;
 				$results = $wpdb->last_result;
 				echo '<div style="text-align: center"><b>', count( $results ), "</b> tables</div>\n";
 				echo '<div id="sqe-results-wrapper"><table id="sqe-results">', "\n";
@@ -97,35 +101,45 @@ class sql_query_exec
 			if( $result !== FALSE )
 			{
 				echo "<hr />\n";
-				$results = $wpdb->last_result;
 				$cnt = 0;
-				echo '<div style="text-align: center"><b>', count( $results ), "</b> results</div>\n";
-				echo '<div id="sqe-results-wrapper"><table id="sqe-results">', "\n";
-				foreach( $results as $result )
+				$results = $wpdb->last_result;
+				if( !empty( $results ) )
 				{
-					$vars = get_object_vars( $result );
-					if( $cnt == 0 )
+					echo '<div style="text-align: center"><b>', count( $results ), "</b> results</div>\n";
+					echo '<div id="sqe-results-wrapper"><table id="sqe-results">', "\n";
+					foreach( $results as $result )
 					{
-						echo '<tr><th class="c1">#</th>';
-						foreach( $vars as $key => $value ) echo '<th>', $key, '</th>';
+						$vars = get_object_vars( $result );
+						if( $cnt == 0 )
+						{
+							echo '<tr><th class="c1">#</th>';
+							foreach( $vars as $key => $value ) echo '<th>', $key, '</th>';
+							echo "</tr>\n";
+						}
+						$cnt++;
+						echo '<tr class="', ( $cnt % 2 == 0 ) ? 'even' : 'odd', '">';
+						echo "<td class=\"c1\">$cnt</td>";
+						foreach( $vars as $key => $value )
+						{
+							if( $sqe_cut )
+							{
+								if( strlen( $value ) < 40 ) $value_ = htmlentities( $value );
+								else $value_ = htmlentities( substr( $value, 0, 40 ) ) . ' &hellip;';
+							}
+							else $value_ = htmlentities( $value );
+							echo '<td>', $value_, '</td>';
+						}
 						echo "</tr>\n";
 					}
-					$cnt++;
-					echo '<tr class="', ( $cnt % 2 == 0 ) ? 'even' : 'odd', '">';
-					echo "<td class=\"c1\">$cnt</td>";
-					foreach( $vars as $key => $value )
-					{
-						if( $sqe_cut )
-						{
-							if( strlen( $value ) < 40 ) $value_ = htmlentities( $value );
-							else $value_ = htmlentities( substr( $value, 0, 40 ) ) . ' &hellip;';
-						}
-						else $value_ = htmlentities( $value );
-						echo '<td>', $value_, '</td>';
-					}
-					echo "</tr>\n";
+					echo "</table></div>\n";
 				}
-				echo "</table></div>\n";
+				else
+				{
+					echo '<div style="text-align: center"><b>No results', "</b></div>\n";
+					// echo '<p id="sqe-message">Query error</p>';
+					// $wpdb->print_error();
+					// var_dump( $wpdb->last_error );
+				}
 				$wpdb->flush();
 			}
 			else

@@ -1,6 +1,17 @@
+# PROJECT UNMAINTAINED
+
+> *This project is not maintained anymore*
+>
+> *If you like it or continue to use it fork it please.*
+
+* * *
+* * *
+
 SQL Query Exec
 --------------
 A Wordpress plugin that allows to execute SQL queries (admin only)
+
+![Screenshot](screenshot.png)
 
 * * *
 
@@ -19,4 +30,4 @@ The author of this plugin is not responsible for the consequences of use of this
 
 * * *
 
-![Screenshot](http://github.com/blocknotes/wordpress_sql_query_exec/raw/master/screenshot.png)
+My website: <https://blocknot.es/>
